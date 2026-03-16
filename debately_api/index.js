@@ -1,4 +1,5 @@
 import axios from "axios"
+import fs from 'fs'
 
 function checkActive(model){
     if(model == undefined){
@@ -9,9 +10,18 @@ function checkActive(model){
 }
 
 export async function generateOpeningStatements(config = {"topic": "", "polarization_score": "", "models": {"openai": {"politcial_leaning": "neutral"}, "gemini": {"politcial_leaning": "neutral"}, "deepseek": {"politcial_leaning": "neutral"}, "minstral": {"politcial_leaning": "neutral"}, "claude": {"politcial_leaning": "neutral"}}}){
+    if(Number.isNaN(Number.parseInt(config.polarization_score)) === true || config.polarization_score == undefined){
+        throw new Error(config.polarization_score + ", polarization score is either not a integer or doesn't exist")
+    }
+
+    if(config.topic == undefined){
+        throw new Error(config.topic + ", topic doesn't exist\nplease enter a topic in the config options")
+    }
+
     let topic = config.topic
-    let polarization_score = config.polarization_score
-    let [active1, active2, active3, active4, active5] = [this.checkActive(config["models"]["openai"]), this.checkActive(config["models"]["deepseek"]), this.checkActive(config["models"]["gemini"]), this.checkActive(config["models"]["minstral"]), this.checkActive(config["models"]["claude"])]
+    let polarization_score = config.polarization_score.toString()
+
+    let [active1, active2, active3, active4, active5] = [checkActive(config["models"]["openai"]), checkActive(config["models"]["deepseek"]), checkActive(config["models"]["gemini"]), checkActive(config["models"]["minstral"]), checkActive(config["models"]["claude"])]
     const llm_name = []
     const obj = {}
     if(active1 === true){
@@ -53,37 +63,34 @@ export async function generateDebateScene(apikey, config = {"topic": "", "polari
     if(checker == apikey + " is the wrong api key"){
         throw new Error(apikey + " is the wrong api key\nYou can buy an api key here: https://buy.stripe.com/28EcN4fzI0Im4dd0eV3ZK03 ")
     }
-    let opening_debate = (await this.generateOpeningStatements(config))
+
+    if(Number.isNaN(Number.parseInt(config.polarization_score)) === true || config.polarization_score == undefined){
+        throw new Error(config.polarization_score + ", polarization score is either not a integer or doesn't exist")
+    }
+
+    if(config.topic == undefined){
+        throw new Error(config.topic + ", topic doesn't exist\nplease enter a topic in the config options")
+    }
+
+    let opening_debate = (await generateOpeningStatements(config))
     let ans = opening_debate["statements"] + "\n"
     console.log(ans)
     let index = 0
     for(let i = 0; i != opening_debate["models"].length; i++){
-        if(index >= opening_debate[1].length){
+        if(index >= opening_debate["models"].length){
             index = 0; 
         }
-        const middle = (await axios.post("https://middle-statements-qrp7kv22mq-uc.a.run.app", {"statements": ans, "name": opening_debate[1][index], "side": opening_debate[2], "polarization_score": config.polarization_score}))["data"]
+        const middle = (await axios.post("https://middle-statements-qrp7kv22mq-uc.a.run.app", {"statements": ans, "name": opening_debate["models"][index], "side": opening_debate["political_sides"], "polarization_score": config.polarization_score.toString()}))["data"]
         
         console.log(middle)
         ans += middle + "\n\n"
         index += 1
     }
-    return ans
+    fs.createWriteStream("debate.txt", "utf-8").write(ans)
+    return {
+        "debate_file": "debate scene is in the debate.txt file in the same folder as this one "
+    }
     
 }
 
 
-const target2 = await generateDebateScene("<your-key>", {
-    topic: "should we nationalize the banks?", 
-    polarization_score: "10",
-    models: {
-        openai: {
-            politcial_leaning: "greedy banker"
-        },
-        claude: {
-            politcial_leaning: "revolutionary communist"
-        },
-        deepseek: {
-            politcial_leaning: "a politician that got a summer home from a bank ceo"
-        }
-    }
-})

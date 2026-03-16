@@ -1,6 +1,9 @@
 {
-  "name": "@debately/api",
-  "version": "1.0.0",
+  "name": "debately",
+  "version": "1.0.9",
+  "repository": {
+    "url": "https://github.com/Jamcha123/debately"
+  },
   "description": "@debately/api is for using debately app api so you can develop your own debating apps",
   "keywords": [
     "api",
