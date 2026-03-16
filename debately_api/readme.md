@@ -1,25 +1,31 @@
-__@Debately/api__ 
+# Debately - AIs debate other AIs
 
-__Buy Your Pro Version API Key Here__: https://buy.stripe.com/28EcN4fzI0Im4dd0eV3ZK03
+__Debately Introduction__:
 
-Contact Info: jameschambers732@gmail.com
+Debately uses multiple LLMs debate each other on a inputed topic and a inputed polarization score (a score between 0 - 10, 10 is civil war level polarization)
 
-Debately api allows you to choose different LLM models to debate the among your selected LLMs.
+__Debately Options__: 
 
+1. Free Debately API: the free version needs no API key but its only for opening statements 
 
-__How Debately Works__:
-    
-    First stage allows each selected LLM to give opening statements on there views on the topic 
+2. Pro Debately API: the pro version needs a API key and each AI take turns to debate each other statements.
 
-    Second stage each selected LLM will find flaws in every other LLM opening statement.
+__Pricing__: 
+
+1. Free Debately API is free
+
+2. Pro Debately API needs you to buy a key for a onetime payment of $1.99 
+
+3. [Buy A Debately Pro API Key](https://buy.stripe.com/28EcN4fzI0Im4dd0eV3ZK03)
 
 
 __Config Options__: 
-
-        {
-            topic: "some topic to debate",
-            polarization_score: 10,
-            models: { //you can pick one, two or all of them 
+        this is the config options you need for the API
+        
+        const config = {
+            topic: "some topic to debate", #required
+            polarization_score: 10, #required
+            models: { //you can keep any combo, 1 models, 2 models, 3 models, 5 models, heck you can even pick 0 models tho nothing will happen.
                 openai: {
                     politcial_leaning: "some political leaning 1",
                 }, 
@@ -40,31 +46,26 @@ __Config Options__:
         }
 
 
-__Free version debately (opening statements, just the first stage)__:
+__How To Use__:
 
-    const just_opening_statements = await generateOpeningStatements(config)
-    console.log(just_opening_statements)
+install it first
 
+    npm install debately
 
-__Free version response object__: 
+the free version is free but its only just the opening statements no full debate between the models.
 
-    {
-        "statements": "the all the opening statements of each selected model", 
-        "models": "names of the selected models", 
-        "political_sides": "political leaning of the selected models"
-    }
+    const free_debately = await generateOpeningStatements(config)
+    console.log(free_debately) 
 
+the pro version allows you to have a debate with all the models you selected from the config options. needs a pro API kek, buy here: https://buy.stripe.com/28EcN4fzI0Im4dd0eV3ZK03
 
-__Pro version of debately (the full debating app with both steps, cost: $1.99)__:
-
-    const full_debate = await generateDebateScene("<your-pro-apiKey>, config)
-    console.log(full_debate)
+    const pro_debately = await generateDebateScene("Your-Pro-API-Key", config)
+    console.log(pro_debately) 
 
 
-__Pro version response object__:
 
-    {
-        "debate_file": "debate scene is in the debate.txt file in this folder"
-    }
+__If you have a issue__:
 
-Hope you enjoy this package and happy debating.
+1. [Debately Github Repo Issue Page](https://github.com/jamcha123/debately/issues)
+
+2. [jameschambers732@gmail.com](jameschambers732@gmail.com)
